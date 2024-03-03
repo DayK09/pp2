@@ -1,12 +1,3 @@
-""""
-import os
-from datetime import datetime
-print(os.getcwd())
-os.chdir('/Users/Userr/Desktop/')
-print(os.listdir())
-print(os.stat('ENglISH.txt'))
-mod = os.stat('ENglISH.txt').st_mtime
-print(datetime.fromtimestamp(mod))
 
 for dirpath, dirnames, filenames in os.walk('/Users/Userr/Desktop/'):
     print('Path: ', dirpath)
@@ -30,7 +21,9 @@ with open('C:\\Users\\Userr\\Desktop\\ENglISH.txt', 'r') as fcc_file:
     for string in file:
         l += len(string.split())
     print(l)
-   
+
+
+
 l = ['I', 'like', 'coffee']
 with open('demo.txt', 'w') as fw:
     for i in l:
@@ -48,6 +41,21 @@ import string
 for abc in string.ascii_uppercase:
     with open(abc + '.txt', 'a') as r:
         r.writelines(abc)
+
+with open('ENglISH.txt', 'r') as f, open('demo.txt', 'a') as r:
+    for i in f:
+        r.write(i)
+
+with open('demo.txt') as p:
+    pr = p.read()
+    print(pr)
+    
+import os
+if os.path.exists('delete.txt') == True:
+    path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'delete.txt')
+    os.remove(path)
+else:
+    print("NOT FOUND")
+
     
 
-"""
