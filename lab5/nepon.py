@@ -81,7 +81,7 @@ import re
 def sn(s):
         return ''.join(x.capitalize() or '_' for x in s.split('_'))
 
-print(sn('python_exercises'))
+print(sn('Hello_World'))
 
 
 import re
