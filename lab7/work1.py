@@ -29,10 +29,14 @@ while True:
     if user[pygame.K_DOWN]:
         y += vel
 
-    if x > 485: x -= 20
-    if y > 485: y -= 20
-    if x < 20: x += 20
-    if y < 20: y += 20
+    if x > 485: 
+        x -= 20
+    if y > 485: 
+        y -= 20
+    if x < 20: 
+        x += 20
+    if y < 20: 
+        y += 20
 
 
     screen.fill((255, 255, 255))  
