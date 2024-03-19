@@ -22,13 +22,13 @@ def time():
         hour = ctime.hour % 12  
         minute = ctime.minute
 
-        minute_angle = minute
-        hour_angle = (hour * 15) + (minute / 2)
+        minute_angle = minute * 3
+        hour_angle = (hour * 20) + (minute * 0.5)
 
         screen.fill((255, 255, 255))
         screen.blit(main, (0, 0))
         
-        rotated_right = pygame.transform.rotate(right, hour_angle)  
+        rotated_right = pygame.transform.rotate(right, -hour_angle)  
         right_rect = rotated_right.get_rect(center=(415, 400))
         screen.blit(rotated_right, right_rect)
         
