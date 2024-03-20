@@ -27,16 +27,14 @@ def run_clock():
         hour = current_time.hour % 12
         minute = current_time.minute
         
-        # Calculate angles in degrees
-        minute_angle = minute * 6  # 360 degrees divided by 60 minutes
-        hour_angle = (hour * 30) + (minute / 2)  # 360 degrees divided by 12 hours + (30 degrees divided by 60 minutes)
+        minute_angle = minute * 6  
+        hour_angle = (hour * 30) + (minute / 2)
         
         screen.fill((255, 255, 255))
         screen.blit(main, (0, 0))
         
         rotated_right, right_rect = rot_center(right, -hour_angle + 90, 415, 400)
         screen.blit(rotated_right, right_rect)
-       
         rotated_left, left_rect = rot_center(left, -minute_angle + 90, 415, 400)
         screen.blit(rotated_left, left_rect)
 
