@@ -1,49 +1,42 @@
 import pygame
-from random import randrange, choice
+from random import randrange as rnd
 
 WIDTH, HEIGHT = 1100, 700
-FPS = 60
+fps = 60
 game_score = 0
 paddle_w = 230
 paddle_h = 25
 paddle_speed = 15
+paddle = pygame.Rect(WIDTH // 2 - paddle_w // 2, HEIGHT - paddle_h - 10, paddle_w, paddle_h)
 ball_radius = 20
 ball_speed = 6
 ball_rect = int(ball_radius * 2 ** 0.5)
-
-# Define brick types
-BRICK_WIDTH = 100
-BRICK_HEIGHT = 50
-BRICK_COLORS = [(randrange(30, 256), randrange(30, 256), randrange(30, 256)) for _ in range(10)]
-BRICK_TYPES = ["normal", "unbreakable", "bonus"]
-
-# Initialize pygame
+ball = pygame.Rect(rnd(ball_rect, WIDTH - ball_rect), HEIGHT // 2, ball_rect, ball_rect)
+dx, dy = 1, -1
+block_list = [pygame.Rect(10 + 110 * i, 10 + 70 * j, 100, 50) for i in range(10) for j in range(4)]
+color_list = [(rnd(30, 256), rnd(30, 256), rnd(30, 256)) for i in range(10) for j in range(4)]
 pygame.init()
 sc = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
+collision_sound = pygame.mixer.Sound('catch.mp3') 
 
-# Create paddle
-paddle = pygame.Rect(WIDTH // 2 - paddle_w // 2, HEIGHT - paddle_h - 10, paddle_w, paddle_h)
-
-# Create ball
-ball = pygame.Rect(randrange(ball_rect, WIDTH - ball_rect), HEIGHT // 2, ball_rect, ball_rect)
-dx, dy = 1, -1
-
-# Create bricks
-block_list = [[pygame.Rect(10 + BRICK_WIDTH * i, 10 + BRICK_HEIGHT * j, BRICK_WIDTH, BRICK_HEIGHT),
-               choice(BRICK_COLORS), choice(BRICK_TYPES)] for i in range(10) for j in range(4)]
-
-def detect_collision(dx, dy, ball, rect):
-    pass
-
-def increase_ball_speed():
-    global ball_speed
-    ball_speed += 1
-
-def shrink_paddle():
-    global paddle_w
-    if paddle_w > 50:
-        paddle_w -= 5
+def delect_collision(dx, dy, ball, rect):
+    if dx > 0:
+        delta_x = ball.right - rect.left
+    else:
+        delta_x = rect.right - ball.left
+    if dy > 0:
+        delta_y = ball.bottom - rect.top
+    else:
+        delta_y = rect.bottom - ball.top
+    
+    if abs(delta_x - delta_y) < 10:
+        dx, dy = -dx, -dy
+    elif delta_x > delta_y:
+        dy = -dy
+    elif delta_y > delta_x:
+        dx = -dx
+    return dx, dy
 
 while True:
     for event in pygame.event.get():
@@ -51,20 +44,30 @@ while True:
             exit()
 
     sc.fill('black')
-
-   
-    for brick, color, brick_type in block_list:
-        if brick_type != "unbreakable":
-            pygame.draw.rect(sc, color, brick)
-
+    [pygame.draw.rect(sc, color_list[color], block) for color, block in enumerate(block_list)]
     pygame.draw.rect(sc, pygame.Color('darkorange'), paddle)
     pygame.draw.circle(sc, pygame.Color('white'), ball.center, ball_radius)
-
-    # Move the ball
     ball.x += ball_speed * dx
     ball.y += ball_speed * dy
+    if ball.centerx < ball_radius or ball.centerx > WIDTH - ball_radius:
+        dx = -dx
+    if ball.centery < ball_radius:
+        dy = -dy
 
-   
+    if ball.colliderect(paddle) and dy > 0:
+        dx, dy = delect_collision(dx, dy, ball, paddle)
+    hit_index = ball.collidelist(block_list)
+    if hit_index != -1:
+        hit_rect = block_list.pop(hit_index)
+        hit_color = color_list.pop(hit_index)
+        dx, dy = delect_collision(dx, dy, ball, hit_rect)
+        hit_rect.inflate_ip(ball.width * 3, ball.height * 3)
+        pygame.draw.rect(sc, hit_color, hit_rect)
+        collision_sound.play() 
+        game_score += 1
+        fps += 2
+
+    # Win, game over
     if ball.bottom > HEIGHT:
         print(game_score)
         print('GAME OVER')
@@ -73,20 +76,12 @@ while True:
         print(game_score)
         print("WIN!!!!!!!!!!!!!!!!!!!!!!!!!")
         exit()
-
+        
     key = pygame.key.get_pressed()
     if key[pygame.K_LEFT] and paddle.left > 0:
         paddle.left -= paddle_speed
     if key[pygame.K_RIGHT] and paddle.right < WIDTH:
         paddle.right += paddle_speed
 
-    #  увеличение скорости шара на 30сек
-    if pygame.time.get_ticks() % 30000 == 0:
-        increase_ball_speed()
-
-    # уменьшение весла каждые 45 сек
-    if pygame.time.get_ticks() % 45000 == 0:
-        shrink_paddle()
-
     pygame.display.flip()
-    clock.tick(FPS)
+    clock.tick(fps)
