@@ -1,3 +1,4 @@
+#бонус - увеличение ширины платформы + звук
 import pygame
 from random import randrange as rnd
 
@@ -86,9 +87,9 @@ while True:
             fps += 2
             block_list.pop(hit_index)
             color_list.pop(hit_index)
-            if is_breakable and hit_index == 5:  # Проверяем, что блок разрушен и его индекс 5
+            if is_breakable and hit_index == 5:  
                 paddle.width += 100
-                bonus_sound.play()  # Увеличиваем ширину платформы на 100
+                bonus_sound.play()  
         else:
             dx, dy = delect_collision(dx, dy, ball, hit_rect, is_breakable)
 
@@ -110,4 +111,3 @@ while True:
 
     pygame.display.flip()
     clock.tick(fps)
-
