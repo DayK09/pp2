@@ -32,7 +32,8 @@ for j in range(rows):
 pygame.init()
 sc = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
-collision_sound = pygame.mixer.Sound('catch.mp3') 
+collision_sound = pygame.mixer.Sound('catch.mp3')
+bonus_sound = pygame.mixer.Sound('bonus.mp3')
 
 def delect_collision(dx, dy, ball, rect, is_breakable):
     if is_breakable:
@@ -86,7 +87,8 @@ while True:
             block_list.pop(hit_index)
             color_list.pop(hit_index)
             if is_breakable and hit_index == 5:  # Проверяем, что блок разрушен и его индекс 5
-                paddle.width += 100  # Увеличиваем ширину платформы на 100
+                paddle.width += 100
+                bonus_sound.play()  # Увеличиваем ширину платформы на 100
         else:
             dx, dy = delect_collision(dx, dy, ball, hit_rect, is_breakable)
 
@@ -108,3 +110,4 @@ while True:
 
     pygame.display.flip()
     clock.tick(fps)
+
