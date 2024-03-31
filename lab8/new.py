@@ -13,13 +13,9 @@ ball_speed = 6
 ball_rect = int(ball_radius * 2 ** 0.5)
 ball = pygame.Rect(rnd(ball_rect, WIDTH - ball_rect), HEIGHT // 2, ball_rect, ball_rect)
 dx, dy = 1, -1
-
-breakable_rows = [0, 1, 2] 
-
+breakable_rows = [0, 1, 2]  
 rows = 4
 columns = 10
-
-# Initialize block_list and color_list
 block_list = []
 color_list = []
 
@@ -40,8 +36,6 @@ collision_sound = pygame.mixer.Sound('catch.mp3')
 
 def delect_collision(dx, dy, ball, rect, is_breakable):
     if is_breakable:
-        # Your logic for handling breakable bricks
-        # This function should return dx, dy as before, depending on the collision behavior
         pass
     else:
         if dx > 0:
@@ -84,7 +78,7 @@ while True:
     if hit_index != -1:
         hit_rect, is_breakable = block_list[hit_index]
         if is_breakable:
-            # Handle breakable brick collision
+           
             hit_rect.inflate_ip(ball.width * 3, ball.height * 3)
             pygame.draw.rect(sc, pygame.Color('black'), hit_rect)
             collision_sound.play() 
@@ -100,7 +94,7 @@ while True:
         print(game_score)
         print('GAME OVER')
         exit()
-    elif not len(block_list):
+    elif not len([block for block, is_breakable in block_list if is_breakable]):
         print(game_score)
         print("WIN!!!!!!!!!!!!!!!!!!!!!!!!!")
         exit()
