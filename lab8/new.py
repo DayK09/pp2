@@ -78,7 +78,6 @@ while True:
     if hit_index != -1:
         hit_rect, is_breakable = block_list[hit_index]
         if is_breakable:
-           
             hit_rect.inflate_ip(ball.width * 3, ball.height * 3)
             pygame.draw.rect(sc, pygame.Color('black'), hit_rect)
             collision_sound.play() 
@@ -86,6 +85,8 @@ while True:
             fps += 2
             block_list.pop(hit_index)
             color_list.pop(hit_index)
+            if is_breakable and hit_index == 5:  # Проверяем, что блок разрушен и его индекс 5
+                paddle.width += 100  # Увеличиваем ширину платформы на 100
         else:
             dx, dy = delect_collision(dx, dy, ball, hit_rect, is_breakable)
 
