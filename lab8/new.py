@@ -13,29 +13,52 @@ ball_speed = 6
 ball_rect = int(ball_radius * 2 ** 0.5)
 ball = pygame.Rect(rnd(ball_rect, WIDTH - ball_rect), HEIGHT // 2, ball_rect, ball_rect)
 dx, dy = 1, -1
-block_list = [pygame.Rect(10 + 110 * i, 10 + 70 * j, 100, 50) for i in range(10) for j in range(4)]
-color_list = [(rnd(30, 256), rnd(30, 256), rnd(30, 256)) for i in range(10) for j in range(4)]
+
+breakable_rows = [0, 1, 2] 
+
+rows = 4
+columns = 10
+
+# Initialize block_list and color_list
+block_list = []
+color_list = []
+
+for j in range(rows):
+    for i in range(columns):
+        is_breakable = (j == rows - 1 and i == 5) or (j < rows - 1)
+        block_rect = pygame.Rect(10 + 110 * i, 10 + 70 * j, 100, 50)
+        block_list.append((block_rect, is_breakable))
+        if is_breakable:
+            color_list.append((rnd(30, 256), rnd(30, 256), rnd(30, 256)))
+        else:
+            color_list.append((255, 255, 255))
+
 pygame.init()
 sc = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
 collision_sound = pygame.mixer.Sound('catch.mp3') 
 
-def delect_collision(dx, dy, ball, rect):
-    if dx > 0:
-        delta_x = ball.right - rect.left
+def delect_collision(dx, dy, ball, rect, is_breakable):
+    if is_breakable:
+        # Your logic for handling breakable bricks
+        # This function should return dx, dy as before, depending on the collision behavior
+        pass
     else:
-        delta_x = rect.right - ball.left
-    if dy > 0:
-        delta_y = ball.bottom - rect.top
-    else:
-        delta_y = rect.bottom - ball.top
-    
-    if abs(delta_x - delta_y) < 10:
-        dx, dy = -dx, -dy
-    elif delta_x > delta_y:
-        dy = -dy
-    elif delta_y > delta_x:
-        dx = -dx
+        if dx > 0:
+            delta_x = ball.right - rect.left
+        else:
+            delta_x = rect.right - ball.left
+        if dy > 0:
+            delta_y = ball.bottom - rect.top
+        else:
+            delta_y = rect.bottom - ball.top
+        
+        if abs(delta_x - delta_y) < 10:
+            dx, dy = -dx, -dy
+        elif delta_x > delta_y:
+            dy = -dy
+        elif delta_y > delta_x:
+            dx = -dx
     return dx, dy
 
 while True:
@@ -44,7 +67,8 @@ while True:
             exit()
 
     sc.fill('black')
-    [pygame.draw.rect(sc, color_list[color], block) for color, block in enumerate(block_list)]
+    for i, (block, is_breakable) in enumerate(block_list):
+        pygame.draw.rect(sc, color_list[i], block)
     pygame.draw.rect(sc, pygame.Color('darkorange'), paddle)
     pygame.draw.circle(sc, pygame.Color('white'), ball.center, ball_radius)
     ball.x += ball_speed * dx
@@ -55,17 +79,21 @@ while True:
         dy = -dy
 
     if ball.colliderect(paddle) and dy > 0:
-        dx, dy = delect_collision(dx, dy, ball, paddle)
-    hit_index = ball.collidelist(block_list)
+        dx, dy = delect_collision(dx, dy, ball, paddle, False)
+    hit_index = ball.collidelist([block[0] for block in block_list])
     if hit_index != -1:
-        hit_rect = block_list.pop(hit_index)
-        hit_color = color_list.pop(hit_index)
-        dx, dy = delect_collision(dx, dy, ball, hit_rect)
-        hit_rect.inflate_ip(ball.width * 3, ball.height * 3)
-        pygame.draw.rect(sc, hit_color, hit_rect)
-        collision_sound.play() 
-        game_score += 1
-        fps += 2
+        hit_rect, is_breakable = block_list[hit_index]
+        if is_breakable:
+            # Handle breakable brick collision
+            hit_rect.inflate_ip(ball.width * 3, ball.height * 3)
+            pygame.draw.rect(sc, pygame.Color('black'), hit_rect)
+            collision_sound.play() 
+            game_score += 1
+            fps += 2
+            block_list.pop(hit_index)
+            color_list.pop(hit_index)
+        else:
+            dx, dy = delect_collision(dx, dy, ball, hit_rect, is_breakable)
 
     # Win, game over
     if ball.bottom > HEIGHT:
