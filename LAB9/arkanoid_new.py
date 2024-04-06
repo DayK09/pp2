@@ -15,7 +15,8 @@ mus_exit = pygame.image.load('exit1_arkanoid.png').convert_alpha()
 play_mus = pygame.image.load('play_mus_arkanoid.png').convert_alpha()
 exitt = pygame.image.load('exit_arkanoid.png').convert_alpha()
 background_image = pygame.image.load('cats3_arkanoid.jpg').convert_alpha()
-pygame.mixer.music.load('memory_arkanoid.mp3')  
+pygame.mixer.music.load('memory_arkanoid.mp3')
+pygame.mixer.music.play(-1)
 class Button():
     def __init__(self, x, y, image):
         self.image = image
