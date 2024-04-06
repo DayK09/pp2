@@ -15,8 +15,7 @@ mus_exit = pygame.image.load('exit1_arkanoid.png').convert_alpha()
 play_mus = pygame.image.load('play_mus_arkanoid.png').convert_alpha()
 exitt = pygame.image.load('exit_arkanoid.png').convert_alpha()
 background_image = pygame.image.load('cats3_arkanoid.jpg').convert_alpha()
-pygame.mixer.music.load('memory_arkanoid.mp3')  # Загружаем фоновую музыку
-pygame.mixer.music.play(-1)
+pygame.mixer.music.load('memory_arkanoid.mp3')  
 class Button():
     def __init__(self, x, y, image):
         self.image = image
@@ -56,31 +55,31 @@ def pause_screen():
     pause_text = pause_font.render('Music', True, (200, 200, 200))
     pause_text_rect = pause_text.get_rect(center=(WIDTH // 2, 100))
 
-    # Create a transparent surface
+    
     pause_surface = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
-    transparency = 128  # Set transparency (0-255)
-    pause_surface.fill((128, 128, 128, transparency))
+     
+    pause_surface.fill((128, 128, 128))
 
-    screen.blit(bg_mus, (0, 0))  # Apply transparent surface
+    screen.blit(bg_mus, (0, 0)) 
     screen.blit(pause_text, pause_text_rect)
 
-    # Create buttons for pausing and resuming music
+    
     play_music_button = Button(600, 250, play_mus)
     pause_music_button = Button(400, 250, pause_mus)
     exit_music_button = Button(500, 400, mus_exit) 
-    # Draw buttons
+    
     play_music_button.draw()
     pause_music_button.draw()
     exit_music_button.draw()
 
-    # Check for button clicks
+    
     for event in pygame.event.get():
         if event.type == pygame.MOUSEBUTTONDOWN:
             if play_music_button.is_clicked(pygame.mouse.get_pos()):
-                pygame.mixer.music.unpause()  # Resume music playback
+                pygame.mixer.music.unpause()  
             elif pause_music_button.is_clicked(pygame.mouse.get_pos()):
                 pygame.mixer.music.pause()
-            elif exit_music_button.is_clicked(pygame.mouse.get_pos()):  # Check exit button click
+            elif exit_music_button.is_clicked(pygame.mouse.get_pos()):  
                 pygame.quit()
                 sys.exit()
  
